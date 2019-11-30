@@ -1,0 +1,4 @@
+1234 : nome1 : 3.2 : 5.3 : 50
+4321 : nome2 : 5.5 : 7.8 : 78
+
+ID : NOME_DO_PRODUTO : VALOR_DE_COMPRA : VALOR_DE_VENDA : QUANTIDADE\n
