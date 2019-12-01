@@ -27,6 +27,7 @@ Sproduto *le_produto(); // LÊ UM PRODUTO DO TECLADO
 void grava_arquivo();
 void cadastra_produto(); // CADASTRA UM PRODUTO OU ENCAMINHA PARA ALTERA_PRODUTO E GRAVA NO ARQUIVO
 Sproduto *altera_produto(); // ALTERA/DELETA UM PRODUTO NO VETOR DE PRODUTOS
+void busca_produto();
 
 // FUNÇÃO MAIN
 int main(){
@@ -35,6 +36,7 @@ int main(){
 
 void menu_principal(){ // MOSTRA O MENU PRINCIPAL DO PROGRAMA
     int op;
+    char c;
     while(1){
         system("cls");
         printf("\n###SISTEMA DE GERENCIAMENTO DE SUPERMERCADO###\n");
@@ -50,7 +52,13 @@ void menu_principal(){ // MOSTRA O MENU PRINCIPAL DO PROGRAMA
             cadastra_produto();
             printf("\nDigite enter para continuar...\n");
             getchar(); //limpar o buffer
-            getchar();
+            c = getchar();
+
+        case 2:
+            busca_produto();
+            printf("\nDigite enter para continuar...\n");
+            getchar(); //limpar o buffer
+            c = getchar();
         }
 
     }
@@ -107,7 +115,7 @@ void grava_arquivo(FILE *p, Sproduto *prod, int n){
 }
 
 void cadastra_produto(){
-    int aux, n=1, i, verifica = 0;
+    int aux, n=1, c, i, verifica = 0;
     FILE *p = abre_arquivo("produtos.txt", "r");
 
     if(verifica_abertura(p)==0){
@@ -217,8 +225,49 @@ Sproduto *altera_produto(Sproduto *produto, int *n, int aux){ // ALTERA E EXCLUI
 
 }
 
+void busca_produto(){
+    int op, codigo, n=1, i, c;
+    system("cls");
+    printf("\n###BUSCA DE PRODUTOS###\n\n");
+    printf("1) Buscar um produto\n2)Buscar todos os produtos");
+    printf("\nOpcao: ");
+    scanf("%i", &op);
+
+    // CARREGA OS PRODUTOS NO VETOR DE PRODUTOS
+    FILE *p = abre_arquivo("produtos.txt", "r");
+    if(verifica_abertura(p)==0){
+        printf("O arquivo não pode ser aberto. Tente novamente!\n");
+        return;
+    }
+    Sproduto *produto = NULL;
+    while(!feof(p)){
+        produto = (Sproduto*) realloc(produto, sizeof(Sproduto)*n);
+        fscanf(p,"%i : %s : %f : %f : %i\n", &(produto[n-1].codigo), produto[n-1].nome, &(produto[n-1].val_compra), &(produto[n-1].preco), &(produto[n-1].quant));
+        c = fgetc(p);
+        if(c == EOF) break;
+        else fseek(p, ftell(p)-1, SEEK_SET);
+        n++;
+    }
+    fclose(p);
 
 
+    if(op==1){
+       printf("Digite o codigo do produto desejado: ");
+        scanf("%i", &codigo);
+        for(i=0;i<n;i++){
+            if(produto[i].codigo == codigo){
+                printf("\nProduto: %s\nCodigo: %i\nValor da compra: %.2f\nValor de venda: %.2f\nQuantidade: %i\n",produto[i].nome, produto[i].codigo, produto[i].val_compra, produto[i].preco, produto[i].quant);
+                free(produto);
+                return;
+            }
+        }
+    }
+    else if(op==2){
+        for(i=0;i<n;i++){
+            printf("\nProduto: %s\nCodigo: %i\nValor da compra: %.2f\nValor de venda: %.2f\nQuantidade: %i\n",produto[i].nome, produto[i].codigo, produto[i].val_compra, produto[i].preco, produto[i].quant);
+        }
+    }
+    free(produto);
+    return;
+}
 
-
-/**/
